@@ -1,0 +1,3 @@
+import { ContactForm } from "@/components/contact/ContactForm";
+export const metadata = { title: "Contact" };
+export default function ContactPage() { return <section className="section contact-layout"><div><span className="eyebrow">Signal / 04</span><h1 className="display">Bring a world into Orrery.</h1><p className="lede">We collaborate on music, rhythm games, interactive projects, experimental media and selected creative-technology work.</p><p className="quiet">The form is ready for a real delivery provider, but currently operates as a development-safe interface only.</p></div><div><ContactForm/></div></section>; }
