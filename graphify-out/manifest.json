@@ -1,0 +1,147 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1785457609.9941792,
+    "ast_hash": "f426cf8bd89f6afd1126f9f259e59fd8",
+    "semantic_hash": "f426cf8bd89f6afd1126f9f259e59fd8"
+  },
+  "app/about/page.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "0357826a26bc38c35bca2e0077ecb741",
+    "semantic_hash": "0357826a26bc38c35bca2e0077ecb741"
+  },
+  "app/artists/[slug]/page.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "1026b33552e4d513b31f6a31dfe6237e",
+    "semantic_hash": "1026b33552e4d513b31f6a31dfe6237e"
+  },
+  "app/artists/page.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "6cdc8da4c880e2ef8b492ed5840185d2",
+    "semantic_hash": "6cdc8da4c880e2ef8b492ed5840185d2"
+  },
+  "app/contact/page.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "551089ae131b0c5f89bcde5ceda0c431",
+    "semantic_hash": "551089ae131b0c5f89bcde5ceda0c431"
+  },
+  "app/layout.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "71ccdfa937e5dc79b1ed510c369ca932",
+    "semantic_hash": "71ccdfa937e5dc79b1ed510c369ca932"
+  },
+  "app/page.tsx": {
+    "mtime": 1785198680.2032273,
+    "ast_hash": "511cfa9637467ab02b290315e4ca904c",
+    "semantic_hash": "511cfa9637467ab02b290315e4ca904c"
+  },
+  "app/works/[slug]/page.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "99adaee43571edc3eafd6a04a8f53438",
+    "semantic_hash": "99adaee43571edc3eafd6a04a8f53438"
+  },
+  "app/works/page.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "a0035e256ac43eea915295db26dd0256",
+    "semantic_hash": "a0035e256ac43eea915295db26dd0256"
+  },
+  "components/audio/AudioPreview.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "cddf8e86f06f9fbf649054cf2c3a996e",
+    "semantic_hash": "cddf8e86f06f9fbf649054cf2c3a996e"
+  },
+  "components/audio/SoundProvider.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "c5092202057a3d0ffef5774cd2ea87fd",
+    "semantic_hash": "c5092202057a3d0ffef5774cd2ea87fd"
+  },
+  "components/audio/SoundToggle.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "0c4c0c281e3cdb252ba84bd5cdd4057f",
+    "semantic_hash": "0c4c0c281e3cdb252ba84bd5cdd4057f"
+  },
+  "components/contact/ContactForm.tsx": {
+    "mtime": 1785198680.2072272,
+    "ast_hash": "265afd2dc726479a1f0e40933c47e66e",
+    "semantic_hash": "265afd2dc726479a1f0e40933c47e66e"
+  },
+  "components/home/EntryExperience.tsx": {
+    "mtime": 1785198680.2112272,
+    "ast_hash": "a7310e22a1f105f7c9f8ed96a58d7f8a",
+    "semantic_hash": "a7310e22a1f105f7c9f8ed96a58d7f8a"
+  },
+  "components/navigation/GlobalNavigation.tsx": {
+    "mtime": 1785198680.2112272,
+    "ast_hash": "5be41f4d181dfb8f874db544968f203a",
+    "semantic_hash": "5be41f4d181dfb8f874db544968f203a"
+  },
+  "components/orbital/OrbitalSystem.tsx": {
+    "mtime": 1785198680.2112272,
+    "ast_hash": "e0b20303054696d905dae2659cdc29ec",
+    "semantic_hash": "e0b20303054696d905dae2659cdc29ec"
+  },
+  "components/works/WorkArchive.tsx": {
+    "mtime": 1785198680.2112272,
+    "ast_hash": "6cf25edd32a19474aaeaa1e35d29bcc6",
+    "semantic_hash": "6cf25edd32a19474aaeaa1e35d29bcc6"
+  },
+  "content/artists.ts": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "a2f747d16c37adeae7bc73fe722b3af7",
+    "semantic_hash": "a2f747d16c37adeae7bc73fe722b3af7"
+  },
+  "content/site.ts": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "a3f9947436697646413ce54793174b75",
+    "semantic_hash": "a3f9947436697646413ce54793174b75"
+  },
+  "content/types.ts": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "60069bc022b50aa003357051fddba352",
+    "semantic_hash": "60069bc022b50aa003357051fddba352"
+  },
+  "content/works.ts": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "81c1d1c02074a9e433f9be4935bf9ba8",
+    "semantic_hash": "81c1d1c02074a9e433f9be4935bf9ba8"
+  },
+  "eslint.config.mjs": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "45251e9a5402c01dbd4d5ef9a3687691",
+    "semantic_hash": "45251e9a5402c01dbd4d5ef9a3687691"
+  },
+  "next.config.ts": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "79999704dc7b81b46cc3a6e8433247bb",
+    "semantic_hash": "79999704dc7b81b46cc3a6e8433247bb"
+  },
+  "package.json": {
+    "mtime": 1785198680.2232273,
+    "ast_hash": "24a9ae9817c8c474265fda7ae50c3a34",
+    "semantic_hash": "24a9ae9817c8c474265fda7ae50c3a34"
+  },
+  "tsconfig.json": {
+    "mtime": 1785198680.2232273,
+    "ast_hash": "8d170b31bab17cb3030d17d29724f1f8",
+    "semantic_hash": "8d170b31bab17cb3030d17d29724f1f8"
+  },
+  "AGENTS.md": {
+    "mtime": 1785457609.9941792,
+    "ast_hash": "6a47d64fcc136324ca395065a707ef76",
+    "semantic_hash": "6a47d64fcc136324ca395065a707ef76"
+  },
+  "README.md": {
+    "mtime": 1785198333.0592353,
+    "ast_hash": "b91c97256400cd7713a0891ddabe47eb",
+    "semantic_hash": "b91c97256400cd7713a0891ddabe47eb"
+  },
+  "orrery_logo.svg": {
+    "mtime": 1785198680.2152271,
+    "ast_hash": "47b2040227d2f1bb49e167b2452414e8",
+    "semantic_hash": "47b2040227d2f1bb49e167b2452414e8"
+  },
+  "public/images/orrery_logo_full.svg": {
+    "mtime": 1785198680.2232273,
+    "ast_hash": "8a06bba1b705bba42a1706b6848d39b4",
+    "semantic_hash": "8a06bba1b705bba42a1706b6848d39b4"
+  }
+}
