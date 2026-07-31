@@ -33,7 +33,7 @@ The root layout supplies the shared shell: metadata, the skip link, `SoundProvid
 
 | Route | Module | Purpose |
 | --- | --- | --- |
-| `/` | `app/page.tsx` | Home page: orbital artist interface, branch links, featured work, manifesto and collaboration call-to-action. |
+| `/` | `app/page.tsx` | Hero-only home page with the orbital artist interface; its central Works node opens the archive. |
 | `/works` | `app/works/page.tsx` | Filterable work archive and reverse-chronological timeline. |
 | `/works/[slug]` | `app/works/[slug]/page.tsx` | Statically generated work detail page. |
 | `/artists` | `app/artists/page.tsx` | Artist-index panels with a compact orbital visual. |
@@ -53,7 +53,7 @@ The concept sitemap also mentions Instruments, Notes, Privacy, Accessibility and
 
 ### Home and orbital interaction
 
-- `components/orbital/OrbitalSystem.tsx` is the main client-side visual system. It draws artist orbits on a canvas, calculates hit targets, slows an orbit on hover, optionally starts an artist preview, opens an artist dialog after a six-second hover, and navigates to an artist detail page on click.
+- `components/orbital/OrbitalSystem.tsx` is the main client-side visual system. It draws artist orbits and a central Works node on a canvas, calculates hit targets, slows an artist orbit on hover, optionally starts an artist preview, opens an artist dialog after a three-second hover, and navigates to an artist detail page or the Works archive on click. The dialog is rendered through a portal above the page, fades in without entrance movement, and gives its orbit lines and moons slow in-place drift; closing fades the complete overlay out.
 - Its `PlayerJS` subcomponent manages a separate HTML audio element for the dialog player: play/pause, timeline and volume.
 - The orbital canvas has an accessible `role="img"` and instruction label, but the rich hover-and-hold interaction is an enhancement; the standard Artists and Works routes remain the durable navigation path.
 - `components/home/EntryExperience.tsx` contains an optional session-scoped entry overlay and a sound-enabled entry action. **It is not imported by the current layout or home page**, so it is inactive in the running site.

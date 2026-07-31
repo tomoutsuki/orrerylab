@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { artists } from "@/content/artists";
 import type { ArtistIdentity } from "@/content/types";
 
@@ -9,12 +10,14 @@ const ORBIT_SPEED = Math.PI / 60;
 const ORBIT_PRECESSION = ORBIT_SPEED * .12;
 const HOVER_SPEED_MULTIPLIER = .05;
 const SPEED_TRANSITION_MS = 800;
-const HOLD_DURATION = 6000;
-const PLANET_RADIUS = 8;
+const HOLD_DURATION = 3000;
+const PLANET_RADIUS = 12;
 const HIT_RADIUS = PLANET_RADIUS * 3; // activation diameter is three planet diameters
+const SUN_HIT_RADIUS = 36;
 
 type Point = { x: number; y: number };
 type PlanetMotion = { angle: number; multiplier: number; target: number; startMultiplier: number; transitionStartedAt: number };
+type OrbitalTarget = { kind: "artist"; artist: ArtistIdentity } | { kind: "works" };
 
 function rotate(point: Point, radians: number): Point {
   return { x: point.x * Math.cos(radians) - point.y * Math.sin(radians), y: point.x * Math.sin(radians) + point.y * Math.cos(radians) };
@@ -49,11 +52,19 @@ function PlayerJS({ artist }: { artist: ArtistIdentity }) {
 }
 
 function ArtistSystem({ artist, onClose }: { artist: ArtistIdentity; onClose: () => void }) {
-  return <div className="artist-system-backdrop" role="presentation" onMouseDown={onClose}>
+  const [closing, setClosing] = useState(false);
+
+  const close = () => {
+    if (closing) return;
+    setClosing(true);
+    window.setTimeout(onClose, 360);
+  };
+
+  return <div className={`artist-system-backdrop ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={close}>
     <section className="artist-system" role="dialog" aria-modal="true" aria-label={`${artist.name} artist system`} onMouseDown={(event) => event.stopPropagation()}>
-      <button className="artist-system-close" type="button" onClick={onClose} aria-label="Close artist system">×</button>
+      <button className="artist-system-close popup-fade" type="button" onClick={close} aria-label="Close artist system">×</button>
       <div className="artist-system-orbit orbit-a"/><div className="artist-system-orbit orbit-b"/><div className="artist-system-orbit orbit-c"/><i className="system-moon moon-a"/><i className="system-moon moon-b"/><i className="system-moon moon-c"/>
-      <div className="artist-system-core"><span className="eyebrow">Artist in orbit</span><h2>{artist.name}</h2><p>{artist.statement}</p><PlayerJS artist={artist}/></div>
+      <div className="artist-system-core popup-fade"><span className="eyebrow">Artist in orbit</span><h2>{artist.name}</h2><p>{artist.statement}</p><PlayerJS artist={artist}/></div>
     </section>
   </div>;
 }
@@ -111,19 +122,34 @@ export function OrbitalSystem({ compact = false }: { compact?: boolean }) {
         const planetRadius = PLANET_RADIUS * (isHovering ? 1.1 : 1); // 1rem diameter, +10% on hover
         context.beginPath(); context.arc(point.x, point.y, planetRadius, 0, Math.PI * 2); context.fillStyle = "#10100f"; context.fill(); context.lineWidth = 1.5; context.strokeStyle = artist.orbit.color; context.stroke();
         if (isHovering) { context.beginPath(); context.arc(point.x, point.y, planetRadius + 5, -Math.PI / 2, -Math.PI / 2 + held * Math.PI * 2); context.strokeStyle = artist.orbit.color; context.lineWidth = 1.25; context.stroke(); }
-        context.fillStyle = "rgba(238,233,222,.8)"; context.font = "10px Inter, ui-sans-serif, system-ui, sans-serif"; context.textAlign = "center"; context.textBaseline = "top"; context.fillText(artist.name, point.x, point.y + planetRadius + 7);
+        context.fillStyle = "rgba(238,233,222,.8)"; context.font = "13.5px Inter, ui-sans-serif, system-ui, sans-serif"; context.textAlign = "center"; context.textBaseline = "top"; context.fillText(artist.name, point.x, point.y + planetRadius + 10);
       });
-      context.beginPath(); context.arc(cx, cy, 28, 0, Math.PI * 2); context.fillStyle = "#10100f"; context.fill(); context.strokeStyle = "#d1bc88"; context.lineWidth = 1.2; context.stroke(); context.beginPath(); context.arc(cx, cy, 2.5, 0, Math.PI * 2); context.fillStyle = "#d1bc88"; context.fill();
-      if (hover.current && now - hover.current.start >= HOLD_DURATION && !compact) { const active = hover.current.artist; hover.current = null; stopPreview(); setSelected(active); }
+      context.beginPath(); context.arc(cx, cy, 28, 0, Math.PI * 2); context.fillStyle = "#10100f"; context.fill(); context.strokeStyle = "#d1bc88"; context.lineWidth = 1.2; context.stroke(); context.beginPath(); context.arc(cx, cy, 2.5, 0, Math.PI * 2); context.fillStyle = "#d1bc88"; context.fill(); context.fillStyle = "rgba(238,233,222,.8)"; context.font = "13.5px Inter, ui-sans-serif, system-ui, sans-serif"; context.textAlign = "center"; context.textBaseline = "top"; context.fillText("Works", cx, cy + 38);
+      if (hover.current && now - hover.current.start >= HOLD_DURATION && !compact) {
+        const active = hover.current.artist;
+        hover.current = null;
+        stopPreview();
+        setSelected(active);
+      }
       frame = requestAnimationFrame(draw);
     };
     frame = requestAnimationFrame(draw); return () => cancelAnimationFrame(frame);
   }, [compact, stopPreview]);
 
-  const artistAt = (clientX: number, clientY: number, element: HTMLCanvasElement) => { const rect = element.getBoundingClientRect(); const x = clientX - rect.left, y = clientY - rect.top; return positions.current.find((point) => Math.hypot(point.x - x, point.y - y) <= HIT_RADIUS); };
-  const move = (event: React.PointerEvent<HTMLCanvasElement> | React.MouseEvent<HTMLCanvasElement>) => { const target = artistAt(event.clientX, event.clientY, event.currentTarget); if (target && hover.current?.artist.slug !== target.artist.slug) { hover.current = { artist: target.artist, start: performance.now() }; startPreview(target.artist); } if (!target && hover.current) { hover.current = null; stopPreview(); } event.currentTarget.style.cursor = target ? "pointer" : "default"; };
+  const targetAt = (clientX: number, clientY: number, element: HTMLCanvasElement): OrbitalTarget | null => {
+    const rect = element.getBoundingClientRect(); const x = clientX - rect.left, y = clientY - rect.top;
+    if (Math.hypot(x - rect.width / 2, y - rect.height / 2) <= SUN_HIT_RADIUS) return { kind: "works" };
+    const artist = positions.current.find((point) => Math.hypot(point.x - x, point.y - y) <= HIT_RADIUS);
+    return artist ? { kind: "artist", artist: artist.artist } : null;
+  };
+  const move = (event: React.PointerEvent<HTMLCanvasElement> | React.MouseEvent<HTMLCanvasElement>) => {
+    const target = targetAt(event.clientX, event.clientY, event.currentTarget);
+    if (target?.kind === "artist" && hover.current?.artist.slug !== target.artist.slug) { hover.current = { artist: target.artist, start: performance.now() }; startPreview(target.artist); }
+    if (target?.kind !== "artist" && hover.current) { hover.current = null; stopPreview(); }
+    event.currentTarget.style.cursor = target ? "pointer" : "default";
+  };
   const leave = () => { hover.current = null; stopPreview(); };
-  const click = (event: React.MouseEvent<HTMLCanvasElement>) => { const target = artistAt(event.clientX, event.clientY, event.currentTarget); if (target) window.location.assign(target.artist.orbit.href); };
+  const click = (event: React.MouseEvent<HTMLCanvasElement>) => { const target = targetAt(event.clientX, event.clientY, event.currentTarget); if (target?.kind === "works") window.location.assign("/works"); if (target?.kind === "artist") window.location.assign(target.artist.orbit.href); };
 
-  return <><canvas ref={canvas} className="orbit-canvas" role="img" aria-label="Interactive artist orrery. Hover an artist planet to listen and hold for six seconds to open their system." onPointerEnter={move} onPointerMove={move} onPointerLeave={leave} onMouseEnter={move} onMouseMove={move} onMouseLeave={leave} onClick={click}/>{selected && <ArtistSystem artist={selected} onClose={() => setSelected(null)}/>}</>;
+  return <><canvas ref={canvas} className="orbit-canvas" role="img" aria-label="Interactive artist orrery. Hover an artist planet to listen and hold for three seconds to open their system. Select Works at the centre to enter the archive." onPointerEnter={move} onPointerMove={move} onPointerLeave={leave} onMouseEnter={move} onMouseMove={move} onMouseLeave={leave} onClick={click}/>{selected && createPortal(<ArtistSystem artist={selected} onClose={() => setSelected(null)}/>, document.body)}</>;
 }
