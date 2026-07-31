@@ -1,30 +1,28 @@
-# Orrery Lab — Website Context Documentation
+# Orrery Lab documentation
 
-This documentation set translates the Orrery Lab brand foundation and website experience direction into practical references for website design, content, and implementation.
+This directory has two complementary documentation sets:
 
-## Documents
+- **Concepts** describe the intended brand, experience, information architecture, and future content system.
+- **Implementation** documents the code that exists in this repository today. It is the source of truth for maintenance and launch-readiness work.
 
-1. [Project Context](./concepts/01-project-context.md)  
-   Defines the project, positioning, scope, audiences, brand architecture, and role of the website.
+The distinction matters: the concept documents include future routes and capabilities (such as Instruments and Notes), while the current application only implements Works, Artists, About, and Contact.
 
-2. [Website Content Strategy](./concepts/02-website-content-strategy.md)  
-   Defines messaging hierarchy, tone of voice, writing patterns, homepage priorities, calls to action, and content governance.
+## Current implementation
 
-3. [Information Architecture](./concepts/03-information-architecture.md)  
-   Defines the launch sitemap, global navigation, page structures, and section-level architecture.
+1. [Architecture and modules](./implementation/01-architecture-and-modules.md) — application structure, routes, rendering boundaries, component responsibilities, and current limitations.
+2. [Content and data model](./implementation/02-content-and-data.md) — the typed local-content layer, relationships, placeholders, and the replacement workflow.
+3. [Audio architecture](./implementation/03-audio-architecture.md) — consent, persistence, player paths, current behaviour, and the work required before release audio is added.
+4. [Asset control](./implementation/04-asset-control.md) — current asset inventory, public-path conventions, CSS artwork, licensing, and delivery guidance.
+5. [Development and quality](./implementation/05-development-and-quality.md) — stack, commands, configuration, static generation, accessibility measures, and launch gaps.
 
-4. [Design and Experience Principles](./concepts/04-design-and-experience-principles.md)  
-   Defines the visual, motion, sound, interaction, accessibility, responsive, and performance principles.
+## Product concepts
 
-5. [Content Models](./concepts/05-content-models.md)  
-   Defines reusable content structures for projects, artists, instruments, notes, homepage features, media, and relationships.
+1. [Project Context](./concepts/01-project-context.md)
+2. [Website Content Strategy](./concepts/02-website-content-strategy.md)
+3. [Information Architecture](./concepts/03-information-architecture.md)
+4. [Design and Experience Principles](./concepts/04-design-and-experience-principles.md)
+5. [Content Models](./concepts/05-content-models.md)
 
-## Recommended Use
+## How to use this documentation
 
-- Use **Project Context** as the shared introduction for designers, writers, and developers.
-- Use **Content Strategy** when drafting or reviewing website copy.
-- Use **Information Architecture** for routes, navigation, wireframes, and page planning.
-- Use **Design and Experience Principles** for UI design and front-end implementation decisions.
-- Use **Content Models** when building the CMS, content files, or data layer.
-
-The documents are intentionally narrower than the complete brand foundation. They should be used as operational references while the original foundation remains the source of truth for philosophy and creative direction.
+Use the implementation set when changing this codebase or preparing a release. Use the concept set to decide what should be built next and how it should fit the Orrery Lab world. When they conflict, document the difference and treat the implementation docs as the accurate description of the shipped application.
