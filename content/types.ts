@@ -10,6 +10,17 @@ export type ArtistIdentity = {
   description: string;
   visualMode: "kinetic" | "cinematic";
   links: ExternalLink[];
+  /** Configuration for the artist's body in the home-page orrery. */
+  orbit: {
+    href: string;
+    radius: number;
+    eccentricity: number;
+    angle: number;
+    phase: number;
+    color: string;
+  };
+  /** Optional paths to licensed audio supplied by the artist. */
+  audio?: { previewSrc?: string; src?: string };
 };
 
 export type Work = {

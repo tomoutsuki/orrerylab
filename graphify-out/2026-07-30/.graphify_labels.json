@@ -4,15 +4,13 @@
   "2": "compilerOptions",
   "3": "package.json",
   "4": "dependencies",
-  "5": "include",
   "6": "contact/page.tsx",
-  "7": "works/page.tsx",
+  "7": "works.ts",
   "8": "about/page.tsx",
   "9": "Graphify Workflow",
   "10": "eslint.config.mjs",
   "11": "next.config.ts",
   "12": "Official Website",
   "13": "Orrery Logo",
-  "14": "Orrery Full Logo",
-  "15": "works/[slug]/page.tsx"
+  "14": "Orrery Full Logo"
 }

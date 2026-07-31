@@ -1,11 +1,11 @@
 # Graph Report - orrerylab  (2026-07-31)
 
 ## Corpus Check
-- 26 files · ~5,139 words
+- 26 files · ~5,031 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 135 nodes · 162 edges · 16 communities (9 shown, 7 thin omitted)
+- 134 nodes · 161 edges · 16 communities (9 shown, 7 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -60,8 +60,8 @@
 ## Communities (16 total, 7 thin omitted)
 
 ### Community 0 - "OrbitalSystem.tsx"
-Cohesion: 0.13
-Nodes (14): metadata, ArtistDetail(), OrbitalSystem(), PlanetMotion, Point, rotate(), artists, getArtist() (+6 more)
+Cohesion: 0.14
+Nodes (13): metadata, ArtistDetail(), OrbitalSystem(), Point, rotate(), artists, getArtist(), ArtistIdentity (+5 more)
 
 ### Community 1 - "layout.tsx"
 Cohesion: 0.22
@@ -96,7 +96,7 @@ Cohesion: 0.47
 Nodes (3): ProjectPage(), AudioPreview(), getWork()
 
 ## Knowledge Gaps
-- **65 isolated node(s):** `principles`, `metadata`, `metadata`, `metadata`, `metadata` (+60 more)
+- **64 isolated node(s):** `principles`, `metadata`, `metadata`, `metadata`, `metadata` (+59 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -104,13 +104,13 @@ Nodes (3): ProjectPage(), AudioPreview(), getWork()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dependencies` connect `dependencies` to `package.json`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `compilerOptions` connect `compilerOptions` to `include`?**
   _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **What connects `principles`, `metadata`, `metadata` to the rest of the system?**
-  _65 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _64 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `OrbitalSystem.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.13230769230769232 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
 - **Should `compilerOptions` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
