@@ -2,12 +2,14 @@
 
 ## Current inventory
 
-The repository currently contains two supplied visual files and no audio, raster-image or video files:
+The repository currently contains two supplied visual files and two artist audio files; it contains no raster-image or video files:
 
 | File | Current role |
 | --- | --- |
 | `orrery_logo.svg` | Root-level SVG asset; it is not imported by the application. |
 | `public/images/orrery_logo_full.svg` | Public SVG served at `/images/orrery_logo_full.svg`; it is not imported by the application. |
+| `public/audio/Lichtgarten.ogg` | Keyaki source used by the artist hover preview and popup player. |
+| `public/audio/Hatred.ogg` | Rei Tsukigaki source used by the artist hover preview and popup player. |
 
 The visible navigation mark and work artwork are presently CSS-generated. `GlobalNavigation` draws the mark using `.brand-mark`; work cards and work pages use gradient-based CSS modes (`iracema`, `amber`, `blue`) from `Work.artwork.mode`. The configured `alt` text is content metadata but is not currently rendered because these artworks are decorative `div` elements rather than image elements.
 

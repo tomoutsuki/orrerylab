@@ -2,12 +2,12 @@
 
 ## Current audio paths
 
-Audio is divided into three independent paths. No released audio asset is currently present in the repository.
+Audio is divided into three independent paths. Artist popup source files are stored in `public/audio/`.
 
 | Path | Module | Trigger and current behaviour |
 | --- | --- | --- |
 | Interface tone | `SoundProvider` | Creates a quiet Web Audio oscillator tone only when the saved sound preference is enabled and the document is visible. |
-| Artist hover/dialog audio | `OrbitalSystem` | Uses native `Audio` from optional artist URLs: hover creates a looping, faded preview; the dialog creates a separate player. No source is configured today. |
+| Artist hover/dialog audio | `OrbitalSystem` | Uses one native `Audio` element from optional artist URLs: hover starts a looping preview that fades to 22%; the dialog adopts that same element, removes looping, and ramps it smoothly to 70%. Keyaki uses `/audio/Lichtgarten.ogg`; Rei Tsukigaki uses `/audio/Hatred.ogg`. |
 | Work preview boundary | `AudioPreview` | Work pages render the unavailable state. The component’s available branch is visual only; it does not load or control an audio file. |
 
 ## Preference and consent
@@ -24,17 +24,17 @@ No full track autoplays. This follows the intended quiet, user-controlled sound 
 content/artists.ts audio paths
   → OrbitalSystem hover: previewSrc, otherwise src
       → looped HTMLAudioElement, fade to 0.06 volume
-  → Artist dialog PlayerJS: src, otherwise previewSrc
-      → separate HTMLAudioElement with play/pause, seek and volume controls
+  → Artist dialog PlayerJS: adopts the active hover element
+      → disables looping and raises the same playback to 70% with play/pause, seek and volume controls
 ```
 
-On pointer exit, a new hover target, dialog opening, or component unmount, the hover preview is paused, reset to zero and released. The dialog player cleans up its own element on unmount/source change.
+On pointer exit, a new hover target, dialog close, or component unmount, the active preview is paused, reset to zero and released. Popup opening deliberately preserves the element so the current track position and audio output continue without a restart.
 
 ## Important current limitations
 
 - The artist player does **not** consult `SoundProvider.enabled`. An artist media source can therefore play through explicit hover/click interaction even when the global interface-sound preference is off.
 - Hover playback is initiated from pointer movement, so browsers may reject `Audio.play()` until a user gesture is accepted. The component safely ignores the rejected promise.
-- The hover preview and dialog player are separate media elements. Opening a dialog stops the hover preview, but there is no global audio manager to coordinate media across all future players.
+- The hover preview and dialog player now share one element during the handoff, but there is no global audio manager to coordinate media across all future players.
 - `AudioPreview` has no `src`, duration, seek, pause or cleanup implementation. Do not pass `available={true}` as a release integration; replace it with a real player bound to verified media metadata.
 - The current canvas interaction is mouse/pointer-oriented. Any production audio experience must retain accessible explicit play controls and text alternatives.
 

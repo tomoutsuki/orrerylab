@@ -14,6 +14,8 @@ const HOLD_DURATION = 3000;
 const PLANET_RADIUS = 12;
 const HIT_RADIUS = PLANET_RADIUS * 3; // activation diameter is three planet diameters
 const SUN_HIT_RADIUS = 36;
+const HOVER_VOLUME = .22;
+const POPUP_VOLUME = .7;
 
 type Point = { x: number; y: number };
 type PlanetMotion = { angle: number; multiplier: number; target: number; startMultiplier: number; transitionStartedAt: number };
@@ -23,35 +25,40 @@ function rotate(point: Point, radians: number): Point {
   return { x: point.x * Math.cos(radians) - point.y * Math.sin(radians), y: point.x * Math.sin(radians) + point.y * Math.cos(radians) };
 }
 
-function PlayerJS({ artist }: { artist: ArtistIdentity }) {
+function PlayerJS({ artist, initialAudio }: { artist: ArtistIdentity; initialAudio: HTMLAudioElement | null }) {
   const audio = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [volume, setVolume] = useState(.35);
+  const [volume, setVolume] = useState(POPUP_VOLUME);
   const source = artist.audio?.src ?? artist.audio?.previewSrc;
 
   useEffect(() => {
-    if (!source) return;
-    const node = new Audio(source); node.volume = .35; audio.current = node;
+    const node = initialAudio ?? (source ? new Audio(source) : null);
+    if (!node) return;
+    node.loop = false; audio.current = node;
     const update = () => setProgress(node.duration ? node.currentTime / node.duration : 0);
     const finish = () => setPlaying(false);
     node.addEventListener("timeupdate", update); node.addEventListener("ended", finish);
-    node.play().then(() => setPlaying(true)).catch(() => undefined);
-    return () => { node.pause(); node.removeEventListener("timeupdate", update); node.removeEventListener("ended", finish); };
-  }, [source]);
-  useEffect(() => { if (audio.current) audio.current.volume = volume; }, [volume]);
+    update();
+    if (node.paused) node.play().then(() => setPlaying(true)).catch(() => undefined); else setPlaying(true);
+    const initialVolume = node.volume; const started = performance.now(); let frame = 0;
+    const fade = () => { const progress = Math.min(1, (performance.now() - started) / 900); node.volume = initialVolume + (POPUP_VOLUME - initialVolume) * progress; if (progress < 1) frame = requestAnimationFrame(fade); };
+    frame = requestAnimationFrame(fade);
+    return () => { cancelAnimationFrame(frame); node.pause(); node.removeEventListener("timeupdate", update); node.removeEventListener("ended", finish); if (audio.current === node) audio.current = null; };
+  }, [initialAudio, source]);
   const toggle = async () => { if (!audio.current) return; if (audio.current.paused) { await audio.current.play(); setPlaying(true); } else { audio.current.pause(); setPlaying(false); } };
   const seek = (next: number) => { if (audio.current?.duration) audio.current.currentTime = next * audio.current.duration; setProgress(next); };
+  const changeVolume = (next: number) => { setVolume(next); if (audio.current) audio.current.volume = next; };
 
   return <div className="player-js" aria-label={`${artist.name} audio player`}>
     <button className="player-toggle" type="button" onClick={toggle} disabled={!source} aria-label={playing ? "Pause" : "Play"}>{playing ? "Ⅱ" : "▶"}</button>
-    <div className="player-track"><div className="player-wave" aria-hidden="true">{Array.from({ length: 34 }, (_, index) => <i key={index} style={{ height: `${22 + ((index * 19) % 63)}%` }} />)}</div><input aria-label="Track progress" type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => seek(Number(event.target.value))} disabled={!source}/></div>
-    <label className="player-volume"><span aria-hidden="true">◌</span><input aria-label="Volume" type="range" min="0" max="1" step=".01" value={volume} onChange={(event) => setVolume(Number(event.target.value))} disabled={!source}/></label>
+    <div className="player-track"><div className="player-wave" aria-hidden="true">{Array.from({ length: 34 }, (_, index) => <i key={index} style={{ height: `${22 + ((index * 19) % 63)}%` }} />)}</div><i className="player-playhead" aria-hidden="true" style={{ left: `${progress * 100}%` }}/><input aria-label="Track progress" type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => seek(Number(event.target.value))} disabled={!source}/></div>
+    <label className="player-volume"><input aria-label="Volume" type="range" min="0" max="1" step=".01" value={volume} style={{ background: `linear-gradient(90deg, var(--brass-highlight) 0 ${volume * 100}%, var(--line) ${volume * 100}% 100%)` }} onChange={(event) => changeVolume(Number(event.target.value))} disabled={!source}/></label>
     {!source && <span className="player-pending">audio in orbit</span>}
   </div>;
 }
 
-function ArtistSystem({ artist, onClose }: { artist: ArtistIdentity; onClose: () => void }) {
+function ArtistSystem({ artist, audio, onClose }: { artist: ArtistIdentity; audio: HTMLAudioElement | null; onClose: () => void }) {
   const [closing, setClosing] = useState(false);
 
   const close = () => {
@@ -61,10 +68,10 @@ function ArtistSystem({ artist, onClose }: { artist: ArtistIdentity; onClose: ()
   };
 
   return <div className={`artist-system-backdrop ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={close}>
+    <div className="popup-orbit-field" aria-hidden="true"><div className="artist-system-orbit orbit-a"/><div className="artist-system-orbit orbit-b"/><div className="artist-system-orbit orbit-c"/><i className="system-moon moon-a"/><i className="system-moon moon-b"/><i className="system-moon moon-c"/></div>
     <section className="artist-system" role="dialog" aria-modal="true" aria-label={`${artist.name} artist system`} onMouseDown={(event) => event.stopPropagation()}>
       <button className="artist-system-close popup-fade" type="button" onClick={close} aria-label="Close artist system">×</button>
-      <div className="artist-system-orbit orbit-a"/><div className="artist-system-orbit orbit-b"/><div className="artist-system-orbit orbit-c"/><i className="system-moon moon-a"/><i className="system-moon moon-b"/><i className="system-moon moon-c"/>
-      <div className="artist-system-core popup-fade"><span className="eyebrow">Artist in orbit</span><h2>{artist.name}</h2><p>{artist.statement}</p><PlayerJS artist={artist}/></div>
+      <div className="artist-system-core popup-fade"><span className="eyebrow">Artist in orbit</span><h2>{artist.name}</h2><p>{artist.statement}</p><PlayerJS artist={artist} initialAudio={audio}/></div>
     </section>
   </div>;
 }
@@ -77,7 +84,8 @@ export function OrbitalSystem({ compact = false }: { compact?: boolean }) {
   const systemAngle = useRef(0);
   const planetMotion = useRef(new Map<string, PlanetMotion>());
   const lastFrame = useRef<number | null>(null);
-  const [selected, setSelected] = useState<ArtistIdentity | null>(null);
+  const [selected, setSelected] = useState<{ artist: ArtistIdentity; audio: HTMLAudioElement | null } | null>(null);
+  const openingPopup = useRef(false);
 
   const stopPreview = useCallback(() => { if (audio.current) { audio.current.pause(); audio.current.currentTime = 0; audio.current = null; } }, []);
   const startPreview = useCallback((artist: ArtistIdentity) => {
@@ -85,7 +93,7 @@ export function OrbitalSystem({ compact = false }: { compact?: boolean }) {
     if (!source) return;
     const node = new Audio(source); node.volume = 0; node.loop = true; audio.current = node;
     node.play().catch(() => undefined);
-    const started = performance.now(); const fade = () => { if (audio.current !== node) return; node.volume = Math.min(.06, ((performance.now() - started) / 900) * .06); if (node.volume < .06) requestAnimationFrame(fade); }; requestAnimationFrame(fade);
+    const started = performance.now(); const fade = () => { if (audio.current !== node) return; node.volume = Math.min(HOVER_VOLUME, ((performance.now() - started) / 1500) * HOVER_VOLUME); if (node.volume < HOVER_VOLUME) requestAnimationFrame(fade); }; requestAnimationFrame(fade);
   }, [stopPreview]);
 
   useEffect(() => stopPreview, [stopPreview]);
@@ -128,8 +136,8 @@ export function OrbitalSystem({ compact = false }: { compact?: boolean }) {
       if (hover.current && now - hover.current.start >= HOLD_DURATION && !compact) {
         const active = hover.current.artist;
         hover.current = null;
-        stopPreview();
-        setSelected(active);
+        openingPopup.current = true;
+        setSelected({ artist: active, audio: audio.current });
       }
       frame = requestAnimationFrame(draw);
     };
@@ -148,8 +156,8 @@ export function OrbitalSystem({ compact = false }: { compact?: boolean }) {
     if (target?.kind !== "artist" && hover.current) { hover.current = null; stopPreview(); }
     event.currentTarget.style.cursor = target ? "pointer" : "default";
   };
-  const leave = () => { hover.current = null; stopPreview(); };
+  const leave = () => { if (openingPopup.current) return; hover.current = null; stopPreview(); };
   const click = (event: React.MouseEvent<HTMLCanvasElement>) => { const target = targetAt(event.clientX, event.clientY, event.currentTarget); if (target?.kind === "works") window.location.assign("/works"); if (target?.kind === "artist") window.location.assign(target.artist.orbit.href); };
 
-  return <><canvas ref={canvas} className="orbit-canvas" role="img" aria-label="Interactive artist orrery. Hover an artist planet to listen and hold for three seconds to open their system. Select Works at the centre to enter the archive." onPointerEnter={move} onPointerMove={move} onPointerLeave={leave} onMouseEnter={move} onMouseMove={move} onMouseLeave={leave} onClick={click}/>{selected && createPortal(<ArtistSystem artist={selected} onClose={() => setSelected(null)}/>, document.body)}</>;
+  return <><canvas ref={canvas} className="orbit-canvas" role="img" aria-label="Interactive artist orrery. Hover an artist planet to listen and hold for three seconds to open their system. Select Works at the centre to enter the archive." onPointerEnter={move} onPointerMove={move} onPointerLeave={leave} onMouseEnter={move} onMouseMove={move} onMouseLeave={leave} onClick={click}/>{selected && createPortal(<ArtistSystem artist={selected.artist} audio={selected.audio} onClose={() => { openingPopup.current = false; stopPreview(); setSelected(null); }}/>, document.body)}</>;
 }
