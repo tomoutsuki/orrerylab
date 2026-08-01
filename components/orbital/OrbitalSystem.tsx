@@ -67,8 +67,9 @@ function ArtistSystem({ artist, audio, onClose }: { artist: ArtistIdentity; audi
     window.setTimeout(onClose, 360);
   };
 
-  return <div className={`artist-system-backdrop ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={close}>
-    <div className="popup-orbit-field" aria-hidden="true"><div className="artist-system-orbit orbit-a"/><div className="artist-system-orbit orbit-b"/><div className="artist-system-orbit orbit-c"/><i className="system-moon moon-a"/><i className="system-moon moon-b"/><i className="system-moon moon-c"/></div>
+  return <div className={`artist-system-backdrop ${closing ? "is-closing" : ""}`} style={{ background: "rgba(0,0,0,.95)" }} role="presentation" onMouseDown={close}>
+    <div className="popup-orbit-field" aria-hidden="true"><div className="popup-orbit popup-orbit-a"/><div className="popup-orbit popup-orbit-b"/><div className="popup-orbit popup-orbit-d"/></div>
+    <div className="popup-planet-field" aria-hidden="true"><div className="popup-planet-rotor popup-planet-a"><i/></div><div className="popup-planet-rotor popup-planet-b"><i/></div><div className="popup-planet-rotor popup-planet-d"><i/></div></div>
     <section className="artist-system" role="dialog" aria-modal="true" aria-label={`${artist.name} artist system`} onMouseDown={(event) => event.stopPropagation()}>
       <button className="artist-system-close popup-fade" type="button" onClick={close} aria-label="Close artist system">×</button>
       <div className="artist-system-core popup-fade"><span className="eyebrow">Artist in orbit</span><h2>{artist.name}</h2><p>{artist.statement}</p><PlayerJS artist={artist} initialAudio={audio}/></div>

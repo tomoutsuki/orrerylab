@@ -1,0 +1,14 @@
+.home {
+  border-top: 0;
+  box-sizing: border-box;
+  height: var(--home-footer-height);
+  padding: 0 clamp(1.1rem, 4vw, 3.5rem);
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: nowrap;
+  font-size: clamp(.6rem, 1.6vw, .72rem);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
